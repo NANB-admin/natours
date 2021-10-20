@@ -1,0 +1,15 @@
+start app in dev mode:
+npm start
+
+start app in prod:
+npm run start:prod
+
+
+** NOTE:  some functionalities are dependent on environment mode (dev / prod), for ex: error handlings
+
+
+DELETE DB Data:
+from \natours\dev-data\data>  node import-dev-data.js --delete
+
+IMPORT DB Data:
+from \natours\dev-data\data>  node import-dev-data.js --import
