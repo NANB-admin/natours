@@ -47,24 +47,43 @@ exports.signup = catchAsync(async (req, res, next) => {
 });
 
 
-exports.login = catchAsync(async (req, res, next) => {
-    const { email, password } = req.body;
+exports.login = async (req, res, next) => {
+    try {
+        const { email, password } = req.body;
 
-    // 1) check if email && password exist
-    if (!email || !password) {
-        return next(new AppError('Please provide email and password!', 400));
+        // 1) check if email && password exist
+        if (!email || !password) {
+            return next(new AppError('Please provide email and password!', 400));
+        }
+
+        // 2) check if user exists && password is correct
+        const user = await User.findOne({ email }).select('+password');
+
+        if (!user || !(await user.correctPassword(password, user.password))) {
+            return next(new AppError('Incorrect email or password', 401));
+        }
+
+        // 3) if everything is OK, send token to client
+        createSendToken(user, 200, res);
+    } catch (err) {
+        return next();
     }
+};
 
-    // 2) check if user exists && password is correct
-    const user = await User.findOne({ email }).select('+password');
 
-    if (!user || !(await user.correctPassword(password, user.password))) {
-        return next(new AppError('Incorrect email or password', 401));
-    }
-
-    // 3) if everything is OK, send token to client
-    createSendToken(user, 200, res);
-});
+/*
+not working rn cause of pug / template import issues
+*/
+exports.logout = (req, res) => {
+    res.cookie('jwt', 'loggedOut', {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true
+    });
+    // res.redirect(200, "/");
+    res.status(200).json({
+        status: 'success'
+    })
+}
 
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -103,6 +122,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
     // Grant access to protected route & store user object on req object for other middlewares (ex: restrictTo);
     req.user = currentUser;
+    res.locals.user = currentUser;
     next();
 });
 
