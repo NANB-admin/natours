@@ -21,7 +21,6 @@ if (mapBox) {
 
 if (loginForm)
   loginForm.addEventListener('submit', e => {
-    console.log('loginForm clicked');
     e.preventDefault();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -37,7 +36,7 @@ if (userDataForm)
     form.append('name', document.getElementById('name').value);
     form.append('email', document.getElementById('email').value);
     form.append('photo', document.getElementById('photo').files[0]);
-    console.log(form);
+    // console.log(form);
 
     updateSettings(form, 'data');
   });
@@ -62,9 +61,7 @@ if (userPasswordForm)
   });
 
 if (bookBtn) {
-  console.log('bookbtn exists')
   bookBtn.addEventListener('click', e => {
-    console.log('bookbtn clicked')
     e.target.textContent = 'Processing...';
     const { tourId } = e.target.dataset;
     bookTour(tourId);

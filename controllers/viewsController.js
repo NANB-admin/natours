@@ -36,7 +36,6 @@ exports.getTour = catchAsync(async (req, res, next) => {
 });
 
 exports.getLoginForm = (req, res) => {
-  console.log('getLoginForm');
   res.status(200)
     .set(
       'Content-Security-Policy',
